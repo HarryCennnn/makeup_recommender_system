@@ -1,0 +1,393 @@
+/* 页面基础设置 */
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f9f9f9;
+    margin: 0;
+    padding: 0;
+}
+
+/* 主容器样式 */
+.container {
+    width: 90%;
+    max-width: 1000px;
+    margin: 40px auto;
+    padding: 20px;
+    background: rgb(222, 210, 232);
+    border-radius: 10px;
+    box-shadow: 0 0 15px rgba(0,0,0,0.1);
+
+    /* 新增：内容居中对齐 */
+    text-align: center;
+}
+
+
+/* 标题样式 */
+h1, h2 {
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+/* 通用按钮样式 */
+button, .btn {
+    padding: 10px 20px;
+    background-color: #7d3c99;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+button:hover, .btn:hover {
+    background-color: #5e2689;
+}
+
+/* 表单样式 */
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+input[type="text"], input[type="password"] {
+    font-size: 20px;  /* 添加这一行，或者改为更大 */
+}
+
+label {
+    font-weight: bold;
+}
+
+/* 链接样式 */
+a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/*标题部分 */
+.container h1 {
+    font-size: 3em;
+    font-family: 'Segoe UI', serif;
+    color: #6a0dad;
+    margin-bottom: 30px;  /* 增加主标题下方间距 */
+}
+
+.container h2 {
+    font-size: 1.3em;
+    font-family: 'Trebuchet MS', serif;
+    margin-top: 5px;      /* 控制副标题顶部距离 */
+    margin-bottom: 1em;
+    color: #333;
+    font-weight: normal;   /* 不加粗 */
+}
+
+/*提示词渲染 */
+input::placeholder {
+    color: #c7c7c7;
+    font-style: italic;
+    font-size: 18px;
+}
+
+/* 顶部导航栏整体 */
+.top-navbar {
+    background-color: #4B0082; /* 深紫色 */
+    color: white;
+    padding: 12px 30px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* 左侧 Logo + 系统名 */
+.nav-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.logo {
+    font-size: 1.5em;
+}
+
+.system-title {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+/* 右侧用户名和退出链接 */
+.nav-right {
+    font-size: 0.95em;
+}
+
+.logout-link {
+    color: #add8e6; /* 浅蓝色 */
+    margin-left: 10px;
+    text-decoration: none;
+}
+
+.logout-link:hover {
+    text-decoration: underline;
+}
+
+
+/* Welcome Page渲染 */
+.welcome-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 40px 20px;
+}
+
+.form-card {
+    background-color: rgb(222, 210, 232);
+    padding: 40px 50px;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    width: 100%;
+    text-align: center;
+}
+
+/* 紫色 Welcome 字体 */
+.welcome-title {
+    font-size: 2.5em;
+    color: #6a0dad;
+    font-family: 'Georgia', serif;
+    margin-bottom: 30px;
+    text-align: center;   /* 添加这一行确保居中 */
+    font-weight: bold;    /* 可选：保持视觉权重 */
+}
+
+.subtitle {
+    color: #6a0dad;
+    font-size: 1.3em;
+    margin-bottom: 25px;
+    font-style: italic;
+    font-weight: 500;
+    font-family: 'Georgia', serif;
+}
+
+.breadcrumb {
+    padding: 10px 30px;
+    background-color: #fff;
+    font-size: 14px;
+    color: #555;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    border-bottom: 1px solid #ccc;
+}
+
+.breadcrumb a {
+    color: #1e70bf;
+    text-decoration: none;
+    margin-right: 5px;
+}
+
+.breadcrumb span {
+    margin: 0 5px;
+    color: #888;
+}
+
+.breadcrumb .current-page {
+    font-weight: bold;
+    color: #666;
+}
+
+/* 设置所有未选择下拉栏的文字颜色为浅灰色 */
+.select-placeholder:invalid {
+    color: #999; /* 浅灰 */
+  }
+  
+  /* 设置正常选择后的颜色 */
+  select {
+    color: #000; /* 正常文本颜色 */
+  }
+
+  /* 让默认选项 Rank 显示为浅灰色 */
+select:invalid {
+    color: #999; /* 或 #aaa，根据你想要的灰度 */
+}
+
+/* Attribute Ranking Page */
+#sortable-list {
+    list-style-type: none;
+    padding: 0;
+    margin: 0 auto;
+    width: 300px;
+    border: 2px dashed #aaa;
+    padding: 10px;
+    background-color: #fff;
+    border-radius: 10px;
+}
+
+#sortable-list li {
+    padding: 12px;
+    margin: 10px 0;
+    background-color: #e5d4f3;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: bold;
+    cursor: move;
+    user-select: none;
+}
+
+/* 标题样式 */
+h1 {
+    text-align: center;
+    color: #4a148c;
+    margin-top: 20px;
+}
+h3 {
+    text-align: center;
+    color: #555;
+    margin-top: 20px;
+}
+p {
+    text-align: center;
+    color: #555;
+    margin-top: 10px;
+    margin-bottom: 15px;
+}
+
+/* 拖拽表格样式 */
+#sortable-table {
+    width: 95%;
+    margin: 0 auto 30px auto;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    border-radius: 10px;
+    overflow: hidden;
+}
+#sortable-table th,
+#sortable-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+}
+#sortable-table th {
+    background-color: #f3e5f5;
+    color: #4a148c;
+}
+#sortable-table tr:nth-child(even) {
+    background-color: #f9f5fc;
+}
+#sortable-table tr:hover {
+    background-color: #f1e4ff;
+    cursor: move;
+}
+
+/* 按钮样式 */
+button[type="submit"] {
+    display: block;
+    margin: 0 auto 40px auto;
+    background-color: #6a1b9a;
+    color: white;
+    padding: 12px 30px;
+    border: none;
+    border-radius: 6px;
+    font-size: 16px;
+    cursor: pointer;
+}
+button[type="submit"]:hover {
+    background-color: #4a148c;
+}
+
+/* Final Recommendation Page */
+/* 页面容器 */
+.page-container {
+    width: 90%;
+    max-width: 1200px;
+    margin: 40px auto;
+    padding: 30px;
+    background-color: #f7f0fb;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.05);
+}
+
+/* 标题样式 */
+.recommend-title {
+    text-align: center;
+    color: #6a1b9a;
+    font-size: 28px;
+    margin-bottom: 8px;
+}
+
+.recommend-subtitle {
+    text-align: center;
+    color: #555;
+    font-size: 16px;
+    margin-bottom: 30px;
+}
+
+/* 表格样式 */
+.recommend-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 14px;
+    background-color: #fff;
+    border-radius: 6px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.04);
+}
+
+.recommend-table th,
+.recommend-table td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: center;
+    vertical-align: middle;
+}
+
+.recommend-table th {
+    background-color: #ede7f6;
+    color: #4a148c;
+    font-weight: bold;
+}
+
+.recommend-table tr:nth-child(even) {
+    background-color: #f9f6fb;
+}
+
+.recommend-table tr:hover {
+    background-color: #f1e7ff;
+}
+
+/* 按钮 */
+.purple-button {
+    display: block;
+    margin: 30px auto 0;
+    background-color: #6a1b9a;
+    color: white;
+    padding: 10px 25px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s ease;
+}
+
+.purple-button:hover {
+    background-color: #4a148c;
+}
+
+input[type="text"],
+input[type="password"] {
+    width: 300px;
+    padding: 10px;
+    margin-top: 5px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    color: #333;
+}
+
+input::placeholder {
+    color: #aaa; /* 灰色提示文字 */
+    font-style: italic;
+}

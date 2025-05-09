@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>User Preference Visualization</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+</head>
+<body>
+    <div class="top-navbar">
+        <div class="nav-left">
+            <a href="/login" class="logo">💄</a>
+            <span class="system-title">Makeup Product Recommender</span>
+        </div>
+        <div class="nav-right">
+            <span class="username">Welcome, {{ session['username'] }}</span>
+            <a href="/logout" class="logout-link">Logout</a>
+        </div>
+    </div>
+
+    <div class="breadcrumb">
+        <a href="/login">Home</a>
+        <span> / </span>
+        <a href="/">Category</a>
+        <span> / </span>
+        <a href="/order">Attribute Ranking</a>
+        <span> / </span>
+        <a href="javascript:history.back()">Recommendation</a>
+        <span> / </span>
+        <span class="current-page">Preference Analysis</span>
+    </div>
+
+    <div class="page-container">
+        <h1 class="recommend-title">Your Preference Analysis</h1>
+        <p class="recommend-subtitle">This page compares your preference-inferred weights with your initial ranking weights.</p>
+
+        <canvas id="radarChart" width="400" height="400"></canvas>
+        <canvas id="barChart" width="400" height="400"></canvas>
+    </div>
+
+    <script>
+        const initialWeights = {{ initial_weights | safe }};
+        const finalWeights = {{ final_weights | safe }};
+
+        const attributes = Object.keys(initialWeights);
+        const initialValues = attributes.map(attr => initialWeights[attr]);
+        const finalValues = attributes.map(attr => finalWeights[attr]);
+
+        // Radar Chart
+        const radarCtx = document.getElementById('radarChart').getContext('2d');
+        new Chart(radarCtx, {
+            type: 'radar',
+            data: {
+                labels: attributes,
+                datasets: [
+                    {
+                        label: 'Initial Weights',
+                        data: initialValues,
+                        backgroundColor: 'rgba(128, 128, 128, 0.2)',
+                        borderColor: 'gray',
+                        pointBackgroundColor: 'gray'
+                    },
+                    {
+                        label: 'Your Weights',
+                        data: finalValues,
+                        backgroundColor: 'rgba(54, 162, 235, 0.2)',
+                        borderColor: 'blue',
+                        pointBackgroundColor: 'blue'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Initial vs Your Inferred Preferences'
+                    }
+                },
+                scales: {
+                    r: {
+                        min: 0.1,
+                        max: 0.4,
+                        ticks: {
+                            stepSize: 0.01
+                        }
+                    }
+                }
+            }
+        });
+
+        // Bar Chart
+        const barCtx = document.getElementById('barChart').getContext('2d');
+        const shifts = attributes.map(attr => finalWeights[attr] - initialWeights[attr]);
+        new Chart(barCtx, {
+            type: 'bar',
+            data: {
+                labels: attributes,
+                datasets: [{
+                    label: 'Weight Shift (Final - Initial)',
+                    data: shifts,
+                    backgroundColor: shifts.map(v => v >= 0 ? 'green' : 'red')
+                }]
+            },
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Preference Weight Shift'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true
+                    }
+                }
+            }
+        });
+    </script>
+    <form action="{{ url_for('recommend') }}" method="get">
+        <button type="submit" class="purple-button">Back to Recommendation</button>
+    </form>
+</body>
+</html>

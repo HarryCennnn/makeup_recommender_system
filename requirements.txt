@@ -1,0 +1,6 @@
+Flask
+pymysql
+sqlalchemy
+bcrypt
+scikit-learn
+pandas

@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Attribute Importance Ranking</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            $('#sortable-list').sortable();
+
+            document.querySelector('form').addEventListener('submit', function(e) {
+                const items = document.querySelectorAll('#sortable-list li');
+                document.querySelectorAll('.hidden-rank-input').forEach(el => el.remove());
+
+                items.forEach((item, index) => {
+                    const attrName = item.getAttribute('data-attr');
+                    const input = document.createElement('input');
+                    input.type = 'hidden';
+                    input.name = attrName;
+                    input.value = index + 1;
+                    input.classList.add('hidden-rank-input');
+                    this.appendChild(input);
+                });
+            });
+        });
+    </script>
+</head>
+<body>
+    <div class="top-navbar">
+        <div class="nav-left">
+            <a href="/login" class="logo">💄</a>
+            <span class="system-title">Makeup Product Recommender</span>
+        </div>
+        <div class="nav-right">
+            <span class="username">Welcome, {{ session['username'] }}</span>
+            <a href="/logout" class="logout-link">Logout</a>
+        </div>
+    </div>
+
+    <div class="breadcrumb">
+        <a href="/login">Home</a>
+        <span> / </span>
+        <a href="/">Category</a>
+        <span> / </span>
+        <span class="current-page">Attribute Ranking</span>
+    </div>
+
+    <div class="welcome-container">
+        <div class="form-card">
+            <h1 class="welcome-title">Rank the Importance of Each Attribute</h1>
+            <p class="subtitle"><em>Drag attributes below into your preferred order (top = most important):</em></p>
+
+            <form method="POST" action="/submit_ranking">
+                <ul id="sortable-list">
+                    <li data-attr="current_price">Current Price</li>
+                    <li data-attr="unit_price">Unit Price</li>
+                    <li data-attr="star_rating">Star Rating</li>
+                    <li data-attr="review_counts">Review Counts</li>
+                </ul><br>
+                <button type="submit" class="purple-button">Submit Rankings</button>
+            </form>
+        </div>
+    </div>
+</body>
+</html>

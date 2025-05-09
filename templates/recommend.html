@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Recommended Products</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+    <div class="top-navbar">
+        <div class="nav-left">
+            <a href="/login" class="logo">💄</a>
+            <span class="system-title">Makeup Product Recommender</span>
+        </div>
+        <div class="nav-right">
+            <span class="username">Welcome, {{ session['username'] }}</span>
+            <a href="/logout" class="logout-link">Logout</a>
+        </div>
+    </div>
+
+    <div class="breadcrumb">
+        <a href="/login">Home</a>
+        <span> / </span>
+        <a href="/">Category</a>
+        <span> / </span>
+        <a href="/order">Attribute Ranking</a>
+        <span> / </span>
+        <span class="current-page">Recommendation</span>
+    </div>
+    
+
+    <div class="page-container">
+        <h1 class="recommend-title">Recommended Products Based on Your Preferences</h1>
+        <p class="recommend-subtitle">Here are 5 products we think you'll like!</p>
+
+        <table class="recommend-table">
+            <thead>
+                <tr>
+                    <th>Recommendation Rank</th>
+                    <th>Product Name</th>
+                    <th>Brand</th>
+                    <th>Current Price</th>
+                    <th>Unit Price</th>
+                    <th>Star Rating</th>
+                    <th>Review Counts</th>
+                    <th>Is On Sale</th>
+                    <th>Is Free Shipping</th>
+                    <th>Is 3-Day Delivery</th>
+                    <th>Category</th>
+                    <th>Link</th>
+                    <th>Platform</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for product in products %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td>{{ product.product_name }}</td>
+                    <td>{{ product.brand }}</td>
+                    <td>{{ product.current_price }}</td>
+                    <td>{{ product.unit_price }}</td>
+                    <td>{{ product.star_rating }}</td>
+                    <td>{{ product.review_counts }}</td>
+                    <td>{{ 'Yes' if product.is_on_sale == 1 else 'No' }}</td>
+                    <td>{{ 'Yes' if product.is_free_shipping == 1 else 'No' }}</td>
+                    <td>{{ 'Yes' if product.is_3day_delivery == 1 else 'No' }}</td>
+                    <td>{{ product.product_category }}</td>
+                    <td><a href="{{ product.product_link }}" target="_blank">Buy Here</a></td>
+                    <td>{{ product.platform }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        <form action="/" method="get">
+            <button type="submit" class="purple-button">Return to Home</button>
+        </form>
+
+        <!-- 新增按钮跳转到用户偏好可视化页面 -->
+        <form action="{{ url_for('user_preference_visualization') }}" method="get">
+            <button type="submit" class="purple-button">See Preference Analysis</button>
+        </form>
+
+    </div>
+</body>
+</html>
