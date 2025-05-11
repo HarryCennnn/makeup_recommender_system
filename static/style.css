@@ -1,4 +1,4 @@
-/* 页面基础设置 */
+/* Basic Setting */
 body {
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
     background-color: #f9f9f9;
@@ -6,7 +6,7 @@ body {
     padding: 0;
 }
 
-/* 主容器样式 */
+/* Main container */
 .container {
     width: 90%;
     max-width: 1000px;
@@ -15,19 +15,17 @@ body {
     background: rgb(222, 210, 232);
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0,0,0,0.1);
-
-    /* 新增：内容居中对齐 */
     text-align: center;
 }
 
 
-/* 标题样式 */
+/* title */
 h1, h2 {
     color: #2c3e50;
     margin-bottom: 20px;
 }
 
-/* 通用按钮样式 */
+/* General buttom */
 button, .btn {
     padding: 10px 20px;
     background-color: #7d3c99;
@@ -41,7 +39,7 @@ button:hover, .btn:hover {
     background-color: #5e2689;
 }
 
-/* 表单样式 */
+/* Form pattern */
 form {
     display: flex;
     flex-direction: column;
@@ -49,14 +47,14 @@ form {
 }
 
 input[type="text"], input[type="password"] {
-    font-size: 20px;  /* 添加这一行，或者改为更大 */
+    font-size: 20px;
 }
 
 label {
     font-weight: bold;
 }
 
-/* 链接样式 */
+/* Link pattern */
 a {
     color: #3498db;
     text-decoration: none;
@@ -66,33 +64,33 @@ a:hover {
     text-decoration: underline;
 }
 
-/*标题部分 */
+/*Title */
 .container h1 {
     font-size: 3em;
     font-family: 'Segoe UI', serif;
     color: #6a0dad;
-    margin-bottom: 30px;  /* 增加主标题下方间距 */
+    margin-bottom: 30px;
 }
 
 .container h2 {
     font-size: 1.3em;
     font-family: 'Trebuchet MS', serif;
-    margin-top: 5px;      /* 控制副标题顶部距离 */
+    margin-top: 5px;
     margin-bottom: 1em;
     color: #333;
-    font-weight: normal;   /* 不加粗 */
+    font-weight: normal;
 }
 
-/*提示词渲染 */
+/*Placeholder */
 input::placeholder {
     color: #c7c7c7;
     font-style: italic;
     font-size: 18px;
 }
 
-/* 顶部导航栏整体 */
+/* Navbar */
 .top-navbar {
-    background-color: #4B0082; /* 深紫色 */
+    background-color: #4B0082;
     color: white;
     padding: 12px 30px;
     display: flex;
@@ -102,7 +100,7 @@ input::placeholder {
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
-/* 左侧 Logo + 系统名 */
+/* Logo and System */
 .nav-left {
     display: flex;
     align-items: center;
@@ -118,13 +116,13 @@ input::placeholder {
     font-weight: bold;
 }
 
-/* 右侧用户名和退出链接 */
+/* User name and logout link */
 .nav-right {
     font-size: 0.95em;
 }
 
 .logout-link {
-    color: #add8e6; /* 浅蓝色 */
+    color: #add8e6;
     margin-left: 10px;
     text-decoration: none;
 }
@@ -134,7 +132,7 @@ input::placeholder {
 }
 
 
-/* Welcome Page渲染 */
+/* Welcome Page */
 .welcome-container {
     display: flex;
     flex-direction: column;
@@ -152,14 +150,14 @@ input::placeholder {
     text-align: center;
 }
 
-/* 紫色 Welcome 字体 */
+/* Welcome */
 .welcome-title {
     font-size: 2.5em;
     color: #6a0dad;
     font-family: 'Georgia', serif;
     margin-bottom: 30px;
-    text-align: center;   /* 添加这一行确保居中 */
-    font-weight: bold;    /* 可选：保持视觉权重 */
+    text-align: center;
+    font-weight: bold;
 }
 
 .subtitle {
@@ -198,19 +196,19 @@ input::placeholder {
     color: #666;
 }
 
-/* 设置所有未选择下拉栏的文字颜色为浅灰色 */
+
 .select-placeholder:invalid {
-    color: #999; /* 浅灰 */
+    color: #999;
   }
   
-  /* 设置正常选择后的颜色 */
+ 
   select {
-    color: #000; /* 正常文本颜色 */
+    color: #000;
   }
 
-  /* 让默认选项 Rank 显示为浅灰色 */
+
 select:invalid {
-    color: #999; /* 或 #aaa，根据你想要的灰度 */
+    color: #999;
 }
 
 /* Attribute Ranking Page */
@@ -236,7 +234,7 @@ select:invalid {
     user-select: none;
 }
 
-/* 标题样式 */
+/* Title */
 h1 {
     text-align: center;
     color: #4a148c;
@@ -254,7 +252,7 @@ p {
     margin-bottom: 15px;
 }
 
-/* 拖拽表格样式 */
+/* Drag table */
 #sortable-table {
     width: 95%;
     margin: 0 auto 30px auto;
@@ -282,7 +280,7 @@ p {
     cursor: move;
 }
 
-/* 按钮样式 */
+/* Buttom pattern */
 button[type="submit"] {
     display: block;
     margin: 0 auto 40px auto;
@@ -299,7 +297,6 @@ button[type="submit"]:hover {
 }
 
 /* Final Recommendation Page */
-/* 页面容器 */
 .page-container {
     width: 90%;
     max-width: 1200px;
@@ -310,7 +307,6 @@ button[type="submit"]:hover {
     box-shadow: 0 0 20px rgba(0,0,0,0.05);
 }
 
-/* 标题样式 */
 .recommend-title {
     text-align: center;
     color: #6a1b9a;
@@ -325,7 +321,6 @@ button[type="submit"]:hover {
     margin-bottom: 30px;
 }
 
-/* 表格样式 */
 .recommend-table {
     width: 100%;
     border-collapse: collapse;
@@ -358,7 +353,7 @@ button[type="submit"]:hover {
     background-color: #f1e7ff;
 }
 
-/* 按钮 */
+
 .purple-button {
     display: block;
     margin: 30px auto 0;
@@ -388,6 +383,6 @@ input[type="password"] {
 }
 
 input::placeholder {
-    color: #aaa; /* 灰色提示文字 */
+    color: #aaa;
     font-style: italic;
 }
