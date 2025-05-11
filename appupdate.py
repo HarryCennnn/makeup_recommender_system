@@ -14,7 +14,7 @@ from sklearn.preprocessing import MinMaxScaler
 app = Flask(__name__)
 app.secret_key = 'your_secret_key_here'
 
-# ---- 连接 MySQL 数据库 ----
+# ---- Connect to SQL database ----
 conn_string = 'mysql+pymysql://{user}:{password}@{host}:{port}/{db}?charset=utf8'.format(
     user="dbmh",
     password="jelIyvfzqwNBWJXpC9bJTQ==",
@@ -92,11 +92,11 @@ def logout():
 def index():
     return render_template('index.html')
 
-# ---- 全局变量 ----
+# ---- Global Varaiables ----
 filtered_products = []
 reorder_products = []
 
-# ---- 筛选产品类别 ----
+# ---- Select Products Category ----
 @app.route('/select_category', methods=['POST'])
 @login_required
 def select_category():
@@ -106,11 +106,11 @@ def select_category():
     free_shipping = request.form['is_free_shipping']
     fast_delivery = request.form['is_3day_delivery']
 
-    # 初始查询语句 & 参数
+    # Initialize the Query
     query_str = "SELECT * FROM Makeup_Table WHERE product_category = :category"
     params = {'category': category}
 
-    # 只有当用户明确选择了 "Yes" 时，才加入筛选条件
+    # Add constraints for selected features
     if on_sale == "1":
         query_str += " AND is_on_sale = :on_sale"
         params['on_sale'] = 1
@@ -123,13 +123,13 @@ def select_category():
         query_str += " AND is_3day_delivery = :fast_delivery"
         params['fast_delivery'] = 1
 
-    # 执行查询
+    # Conduct the query
     query = text(query_str)
     with engine.connect() as conn:
         result = conn.execute(query, params)
         products = result.fetchall()
 
-    # 构建产品列表
+    # Build the products list
     filtered_products = [
         {
             'product_name': p[0], 'brand': p[1], 'current_price': p[2], 'unit_price': p[3],
@@ -140,7 +140,7 @@ def select_category():
 
     return redirect(url_for('order'))
 
-# ---可视化路由---
+# ---Visualization Route---
 @app.route('/visualization', methods=['POST'])
 @login_required
 def visualization():
@@ -149,8 +149,8 @@ def visualization():
     free_shipping = request.form.get('is_free_shipping')
     fast_delivery = request.form.get('is_3day_delivery')
 
-    # 构建查询语句
-    query_str = "SELECT current_price, review_counts, unit_price FROM Makeup_Table WHERE product_category = :category"
+    # Query
+    query_str = "SELECT current_price, review_counts, unit_price, star_rating FROM Makeup_Table WHERE product_category = :category"
     params = {'category': category}
 
     if on_sale == "1":
@@ -163,15 +163,18 @@ def visualization():
         query_str += " AND is_3day_delivery = :fast_delivery"
         params['fast_delivery'] = 1
 
-    # 查询数据
+    # Activate the query
     query = text(query_str)
     with engine.connect() as conn:
         result = conn.execute(query, params)
         rows = result.fetchall()
 
-    # 提取字段
+    # Extract the results
     price_data = [float(row[0]) for row in rows if row[0] is not None]
-    review_data = [int(row[1]) for row in rows if row[1] is not None]
+    raw_review_data = [int(row[1]) for row in rows if row[1] is not None]
+    threshold = np.percentile(raw_review_data, 70)
+    review_data = [x for x in raw_review_data if x <= threshold]
+    star_rating_data = [float(row[3]) for row in rows if row[3] is not None]
     unit_price_data = [float(row[2]) for row in rows if row[2] is not None]
 
     return render_template(
@@ -182,18 +185,19 @@ def visualization():
         fast_delivery=fast_delivery,
         price_data=json.dumps(price_data),
         review_data=json.dumps(review_data),
-        unit_price_data=json.dumps(unit_price_data)
+        unit_price_data=json.dumps(unit_price_data),
+        star_rating_data=json.dumps(star_rating_data)
     )
 
 
 @app.route('/user_preference_visualization')
 @login_required
 def user_preference_visualization():
-    # 从 session 中获取初始权重和用户反馈权重
+    # Get initial weight from session
     initial_weights = session.get('initial_weights')
     final_weights = session.get('final_weights')
 
-    # 如果 session 中没有权重，返回错误
+    # Error
     if not initial_weights or not final_weights:
         return "Error: Preference weights not found. Please complete reorder process first.", 400
 
@@ -204,13 +208,13 @@ def user_preference_visualization():
     )
 
 
-# ---- 打分页面 ----
+# ---- Rating Route ----
 @app.route('/order', methods=['GET'])
 @login_required
 def order():
     return render_template('order.html')
 
-# ---- 用户提交排序，计算 initial_weights 并生成 reorder 产品 ----
+# ---- Reorder Route ----
 @app.route('/submit_ranking', methods=['POST'])
 @login_required
 def submit_ranking():
@@ -224,13 +228,13 @@ def submit_ranking():
     lower_is_better = ['current_price', 'unit_price']
     user_order = session['attribute_ranking']
 
-    # 用户权重
+    # User's Weight
     max_rank = len(user_order)
     user_weights = {attr: (max_rank - rank + 1) for attr, rank in user_order.items()}
     total = sum(user_weights.values())
     user_weights = {k: v / total for k, v in user_weights.items()}
 
-    # 系统权重
+    # General Weight
     query = text("""
         SELECT weight_star_rating, weight_review_counts, weight_current_price, weight_unit_price
         FROM user_accounts WHERE username = :username
@@ -247,7 +251,7 @@ def submit_ranking():
         except:
             system_weights = {attr: 1.0 / len(ranking_attributes) for attr in ranking_attributes}
 
-    # 合成 initial_weights
+    # Combined to initial_weights
     alpha = 0.7
     initial_weights = {
         attr: alpha * user_weights[attr] + (1 - alpha) * system_weights.get(attr, 0)
@@ -256,25 +260,25 @@ def submit_ranking():
     total_w = sum(initial_weights.values())
     initial_weights = {k: v / total_w for k, v in initial_weights.items()}
 
-    # 评分并选择 top10
+    # Rate and recommend top10
     scaler = MinMaxScaler()
     df = pd.DataFrame(filtered_products)
     df_original = df.copy()
-    # 替换 review_counts 为 log1p(review_counts)，并独立归一化
+    # Subsitute review_counts for log1p(review_counts) and normalize
     df_scaled = df.copy()
     df_scaled['review_counts'] = np.log1p(df['review_counts'])
     df_scaled['review_counts'] = scaler.fit_transform(df_scaled[['review_counts']])
 
-    # 其余属性归一化
+    # Normalize the features
     for attr in ranking_attributes:
         if attr != 'review_counts':
             df_scaled[attr] = scaler.fit_transform(df[[attr]])
 
-    # 对价格类反转归一化
+    # Reverse the ranking for price-type attributes
     for attr in lower_is_better:
         df_scaled[attr] = 1.0 - df_scaled[attr]
 
-    # 计算打分
+    # Calculate the final score
     df_scaled['score'] = sum(df_scaled[attr] * initial_weights[attr] for attr in ranking_attributes)
     top10_indices = df_scaled.sort_values(by='score', ascending=False).head(10).index
     reorder_products = df_original.loc[top10_indices].to_dict(orient='records')
@@ -282,7 +286,7 @@ def submit_ranking():
     return render_template('reorder.html', products=reorder_products)
 
 
-# ---- 用户提交 reorder 排序并推荐 ----
+# ---- User submit reorder ----
 @app.route('/submit_reorder', methods=['POST'])
 @login_required
 def submit_reorder():
@@ -297,22 +301,22 @@ def submit_reorder():
     ranking_attributes = ['current_price', 'unit_price', 'star_rating', 'review_counts']
     lower_is_better = ['current_price', 'unit_price']
 
-    # 替换 review_counts 为 log1p 并独立归一化
+    # Subsitute review_counts for log1p and normalize
     scaler = MinMaxScaler()
     df_scaled = df_feedback.copy()
     df_scaled['review_counts'] = np.log1p(df_feedback['review_counts'])
     df_scaled['review_counts'] = scaler.fit_transform(df_scaled[['review_counts']])
 
-    # 其余属性归一化
+    # Normalize features
     for attr in ranking_attributes:
         if attr != 'review_counts':
             df_scaled[attr] = scaler.fit_transform(df_feedback[[attr]])
 
-    # 对 lower_is_better 的特征反转
+    # Reverse price-type attribute
     for attr in lower_is_better:
         df_scaled[attr] = 1.0 - df_scaled[attr]
 
-    # 生成 reorder feedback weights
+    # Generate reorder feedback weights
     attribute_updates = {attr: 0.0 for attr in ranking_attributes}
     max_rank_feedback = len(user_feedback_ranks)
 
@@ -330,7 +334,7 @@ def submit_reorder():
         k: 1.0 / len(attribute_updates) for k in ranking_attributes
     }
 
-    # 计算最终 combined weights
+    # Calculate combined weights
     beta = 0.1
     combined_weights = {
         attr: (1 - beta) * initial_weights[attr] + beta * reorder_weights[attr] for attr in ranking_attributes
@@ -338,7 +342,7 @@ def submit_reorder():
     total_final = sum(combined_weights.values())
     combined_weights = {k: v / total_final for k, v in combined_weights.items()}
 
-    # 保存最终权重
+    # Store the final weight
     update_query = text("""
         UPDATE user_accounts
         SET weight_star_rating = :star,
@@ -356,7 +360,7 @@ def submit_reorder():
             'username': session['username']
         })
 
-    # 推荐 top5
+    # Recommend top5
     final_scores = np.zeros(len(df_scaled))
     for attr in ranking_attributes:
         final_scores += df_scaled[attr] * combined_weights[attr]
@@ -364,7 +368,7 @@ def submit_reorder():
     df_feedback['final_score'] = final_scores
     top5_df = df_feedback.sort_values(by='final_score', ascending=False).head(5)
 
-    # 保存到 session 中供可视化使用
+    # Save to session for visualization
     session['initial_weights'] = initial_weights
     session['final_weights'] = combined_weights
     session['recommend_products'] = top5_df.to_dict(orient='records')
@@ -383,6 +387,6 @@ def recommend():
 
 
 
-# ---- 启动服务器 ----
+# ---- Initialize the server ----
 if __name__ == '__main__':
     app.run(debug=True)
