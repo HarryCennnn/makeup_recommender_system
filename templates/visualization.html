@@ -6,14 +6,12 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        .chart-row {
-            display: flex;
-            justify-content: space-between;
+        .chart-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 20px;
-            flex-wrap: wrap;
         }
         .chart-container {
-            flex: 1 1 30%;
             min-width: 300px;
         }
         .slider-container {
@@ -28,6 +26,22 @@
         }
         .range-wrapper input[type=range] {
             width: 80%;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 40px;
+        }
+        .return-button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #7f56d9;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+        }
+        .return-button:hover {
+            background-color: #6c47c3;
         }
     </style>
 </head>
@@ -55,7 +69,7 @@
         <h1 class="recommend-title">Distribution of Products Under Your Selection</h1>
         <p class="recommend-subtitle">Use the sliders below to dynamically filter and update product distributions.</p>
 
-        <div class="chart-row">
+        <div class="chart-grid">
             <div class="chart-container">
                 <canvas id="priceChart" height="200"></canvas>
                 <div class="slider-container" id="priceSlider"></div>
@@ -68,6 +82,13 @@
                 <canvas id="unitPriceChart" height="200"></canvas>
                 <div class="slider-container" id="unitSlider"></div>
             </div>
+            <div class="chart-container">
+                <canvas id="starChart" height="200"></canvas>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <a href="/" class="return-button">← Return to Category</a>
         </div>
     </div>
 
@@ -75,6 +96,7 @@
         const priceDataRaw = {{ price_data | safe }};
         const reviewDataRaw = {{ review_data | safe }};
         const unitPriceDataRaw = {{ unit_price_data | safe }};
+        const starRatingDataRaw = {{ star_rating_data | safe }};
 
         const globalRanges = {
             price: [Math.floor(Math.min(...priceDataRaw)), Math.ceil(Math.max(...priceDataRaw))],
@@ -95,7 +117,7 @@
             });
             return {
                 bins,
-                labels: Array.from({ length: binCount }, (_, i) => Math.round(min + i * binWidth))
+                labels: Array.from({ length: binCount }, (_, i) => (min + i * binWidth).toFixed(1))
             };
         }
 
@@ -104,7 +126,8 @@
                 .map((_, i) => ({
                     price: priceDataRaw[i],
                     review: reviewDataRaw[i],
-                    unit: unitPriceDataRaw[i]
+                    unit: unitPriceDataRaw[i],
+                    star: starRatingDataRaw[i]
                 }))
                 .filter(d =>
                     d.price >= minMax.price[0] && d.price <= minMax.price[1] &&
@@ -118,10 +141,12 @@
             const priceData = filtered.map(d => d.price);
             const reviewData = filtered.map(d => d.review);
             const unitData = filtered.map(d => d.unit);
+            const starData = filtered.map(d => d.star);
 
             updateChart(priceChart, priceData, 'Price Distribution');
             updateChart(reviewChart, reviewData, 'Review Count Distribution');
             updateChart(unitPriceChart, unitData, 'Unit Price Distribution');
+            updateChart(starChart, starData, 'Star Rating Distribution');
         }
 
         function updateChart(chart, rawData, label) {
@@ -157,6 +182,7 @@
         const priceChart = renderChart('priceChart', priceDataRaw, 'Price Distribution', 'skyblue');
         const reviewChart = renderChart('reviewChart', reviewDataRaw, 'Review Count Distribution', 'lightgreen');
         const unitPriceChart = renderChart('unitPriceChart', unitPriceDataRaw, 'Unit Price Distribution', 'salmon');
+        const starChart = renderChart('starChart', starRatingDataRaw, 'Star Rating Distribution', 'plum');
 
         let minMax = {
             price: [...globalRanges.price],
